@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class FileReader{
+class FileHandler{
 
 private:
   const int PSEUDOEOF = 256;
@@ -29,6 +29,7 @@ public:
 
   string getFileName();
 
+void printToFile(vector<string> encodings, int heapSize);
   void printFile();
   int getMaxChar();
 

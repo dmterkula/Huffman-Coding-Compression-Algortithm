@@ -14,6 +14,8 @@
 
 using namespace std;
 
+static vector<string> encodings;
+
 priority_queue <HeapNode> buildHeap(priority_queue<HeapNode> theHeap, vector<int> characters){
   // use a for loop and create heap nodebased on index and weight
   for(int asciiValue = 0; asciiValue < characters.size(); asciiValue++){
@@ -28,7 +30,7 @@ priority_queue <HeapNode> buildHeap(priority_queue<HeapNode> theHeap, vector<int
 }
 
 HeapNode getHuffmanTree(priority_queue <HeapNode> theHeap){
-cout << "Tree Building!" << endl;
+//cout << "Tree Building!" << endl;
   while(theHeap.size() > 1){
     HeapNode newNode;
     HeapNode smallest = theHeap.top();
@@ -41,30 +43,11 @@ cout << "Tree Building!" << endl;
   return theHeap.top();
 }
 
-vector<string> traverse(HuffmanNode* node, string path, vector<string> &encodings){ // make vector of appropriate length or use map
-  if(node == NULL){
-    return encodings;
-  }
-
-  if(node->getLeftChild() != NULL){
-    traverse(node->getLeftChild(), path + "0", encodings);
-  }
-
-if(node->getRightChild() != NULL){
-  traverse(node->getRightChild(), path + "1", encodings);
- }
-
- if(node->getValue() != -1){ // we have a legit node
- cout << "at a leaf " << node->getValue() << ": " << path <<  endl;
- encodings[node->getValue()] = path;
-  }
-
- return encodings;
-}
-
-void printEncodings(vector<string> encodings){
+void printEncodings(){
   for(int i = 0; i < encodings.size(); i++){
+      if(encodings[i] != ""){
     cout << encodings[i] << endl;
+  }
   }
 }
 
@@ -74,16 +57,6 @@ void printTheHeap(priority_queue<HeapNode> theHeap){
   cout << "Value: " << letter << "," <<theHeap.top().getHuffmanNode()->getValue() << "   Weight: " << theHeap.top().getHuffmanNode()->getWeight() << endl;
   theHeap.pop();
 }
-}
-
- void testTree(HeapNode tree){
-  cout << "top node weight = " << tree.getHuffmanNode()->getWeight() << endl;
-  HuffmanNode* leftChild1 = tree.getHuffmanNode()->getLeftChild();
-  HuffmanNode* rightChild1 = tree.getHuffmanNode()->getRightChild();
-
-  cout << " first left child weight = " << leftChild1->getWeight() << endl;
-  cout << " second right child weight = " << rightChild1->getWeight() << endl;
-
 }
 
 void testTraverse(HuffmanNode* node){
@@ -105,10 +78,29 @@ if(node->getRightChild() != NULL){
    char letter = node->getValue();
  cout << "at a leaf " << letter << ", " << node->getValue() << endl;
   }
-
  return;
-}
 
+ }
+
+ void traverse(HuffmanNode* node, string path){ // make vector of appropriate length or use map
+   if(node == NULL){
+     return;
+   }
+
+   if(node->getLeftChild() != NULL){
+     traverse(node->getLeftChild(), path + "0");
+   }
+
+ if(node->getRightChild() != NULL){
+   traverse(node->getRightChild(), path + "1");
+  }
+
+  if(node->getValue() != -1){ // we have a legit node
+    char letter = node->getValue();
+  cout << "at a leaf... char: " << letter << ":   " << "acsii: " << node->getValue() << ": " << "path: " << path <<  endl;
+  encodings[node->getValue()] = path;
+   }
+ }
 
 int main(){
   FileReader* fileReader = new FileReader("test.txt");
@@ -117,15 +109,18 @@ int main(){
   //cout << "characters.size() = " << characters.size() << endl;
   priority_queue <HeapNode> theHeap;
   theHeap = buildHeap(theHeap, characters);
-  printTheHeap(theHeap);
+  int heapSize = theHeap.size();
+  //printTheHeap(theHeap);
   HeapNode tree = getHuffmanTree(theHeap);
-  //testTree(tree);
-  testTraverse(tree.getHuffmanNode());
-  vector<string> encodings;
-  encodings.assign(theHeap.size(), "");
+  //testTraverse(tree.getHuffmanNode());
+  cout << endl;
+  encodings.assign(257, "");
+  // cout << "encondings.size() = " << encodings.size() << endl;
   //cout << "the heap.size() = " << theHeap.size() << endl;
   string path = "";
-  //encodings = traverse(tree.getHuffmanNode(), path,  encodings);
-  //cout << "out of trverse method" << endl;
-  //printEncodings(encodings);
+  // cout << "getting encodings" << endl;
+  traverse(tree.getHuffmanNode(), path);
+  fileReader->printToFile(encodings, heapSize-1); // don't include PSEUDOEOF
+  // cout << "out of trverse method" << endl;
+  //printEncodings();
 }

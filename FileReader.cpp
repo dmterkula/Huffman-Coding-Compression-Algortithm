@@ -1,6 +1,6 @@
-// FileReader.h
+// FileHandler.h
 /*
-* creates a class that reads in a file by each char
+* creates a class that reads
 */
 #include <iostream>
 #include <vector>
@@ -11,7 +11,7 @@
 using namespace std;
 
 
-  FileReader::FileReader(string fileName1){
+  FileHandler::FileHandler(string fileName1){
     characters.assign(257,0);
     characters[256] = 1;
     fileName = fileName1;
@@ -20,11 +20,11 @@ using namespace std;
 
 
 
-  string FileReader::getFileName(){
+  string FileHandler::getFileName(){
     return fileName;
   }
 
-  vector<int> FileReader::readFile(){
+  vector<int> FileHandler::readFile(){
     ifstream infile;
     infile.open(getFileName().c_str());
     while(infile.peek() && !infile.eof()){
@@ -34,13 +34,28 @@ using namespace std;
     return characters;
   }
 
- void FileReader::printFile(){
+  void FileHandler::printToFile(vector<string> encodings, int heapSize){
+  string convertedText = "";
+   ofstream outputFile; // start using obstream
+   outputFile.open("HuffEncodingData.txt");
+   outputFile << heapSize;
+   for(int i = 0; i < characters.size() -1; i++){ // don't use PSEUDOEOF
+     if(characters[i] != 0){
+       char letter = i;
+       convertedText += encodings[i];
+       outputFile << letter << characters[i] << " ";
+     }
+   }
+   outputFile << convertedText; // use write bits method
+  }
+
+ void FileHandler::printFile(){
    cout << "in printFile" << endl;
    for(int i = 0; i < characters.size(); i++){
      cout << i << ": count: " << characters[i] << endl;
    }
  }
 
-    int FileReader::getMaxChar(){
+    int FileHandler::getMaxChar(){
       return PSEUDOEOF;
     }
